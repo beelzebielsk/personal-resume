@@ -1,0 +1,287 @@
+\documentclass{article}
+%- Preamble: {{{ -------------------------------------------
+
+% Disable page numbers.
+\pagenumbering{gobble}
+%- Packages: -----------------------------------------------
+\usepackage[margin=.7in, asymmetric, centering]{geometry}
+\usepackage{float}
+\usepackage{enumitem}
+\usepackage{fontspec} % Requires LuaLaTeX!
+\usepackage{array} % For extra table stuffs, like before/after column commands.
+\usepackage{tabu}
+%- Fonts: --------------------------------------------------
+\setmainfont{Heuristica}
+%- Lengths: ------------------------------------------------
+\setlength{\parindent}{0pt}
+%- Commands: {{{ -------------------------------------------
+% To do small caps: \textsc{}.
+\newcommand{\name}[1]{{\huge #1} \vspace{10pt}}
+\newcommand{\sectionTitle}[1]{{\Large #1} \vspace{4pt}}
+\newcommand{\subSectionTitle}[1]{%
+	{\large \textbf{#1}} \vspace{4pt}%
+}
+\newcommand{\placeStyle}[1]{\textbf{#1}}
+\newcommand{\positionStyle}[1]{\textit{#1}}
+\newenvironment{newplace}
+  {
+    \setlength{\tabcolsep}{0pt}
+    \begin{tabu} to \textwidth [h!]{X[65,l]X[35,r]}
+  }
+  {\end{tabu}}
+\newcommand{\placerow}[2]{\placeStyle{#1} & #2\tabularnewline}
+\newcommand{\jobrow}[2]{\positionStyle{#1} & #2\tabularnewline}
+\newcommand{\plainrow}[2]{#1 & #2\tabularnewline}
+\newenvironment{bullets}
+	{\begin{itemize}[noitemsep, topsep=0pt]}
+	{\end{itemize}}
+\newenvironment{resumesection}[1]
+	{\sectionTitle{#1}}
+	{\vspace{10pt}}
+
+%- }}} -----------------------------------------------------
+%- }}} -----------------------------------------------------
+\begin{document}
+
+% TODO:
+% - Make a table out of the top.
+% - Remove the page numbers from the page, as they're not necessary
+%   (we're not doing more than one page).
+% - Consider putting the Single Cycle CPU and continuations project on
+%   your resume.
+
+% - What specific things do I want to communicate to an employer about
+%   me?
+%   - I can do research/I can take a problem, break it down,
+%     investigate it and come up with a solution. I had to do this for
+%     the CPU, for creating continuations, a bunch for MSK.
+%   - I can come up with a concept for a project, which I brainstormed
+%     with my hoopla team.
+%   - I can collaborate a team and deliver a product under a deadline,
+%     which I had to do in the hackathon (strict deadline, prioritize
+%     working result over ambitious one) and with my hoopla team (less
+%     strict deadline, deliver ambitious and working results).
+%   - I can take some initiative and risk: I will do extra work if I'm
+%     invested in something. I am curious about what I do, I like to
+%     ask questions, and I'll put in the extra time necessary to get
+%     satisfactory answers. I did that with continuations because I
+%     finished continued to do work on the project after the semester
+%     ended. I've done that with little extra assignments that I give
+%     myself.
+%   - I can follow a specification, which I had to do with MSK
+%     (loosely) and for designing the CPUs.
+%   - I can extend existing work: the continutations interpreter and
+%     MSK work with the original codebase. 
+
+\begin{center}
+	\name{Adam Ibrahim}
+
+	(347)-458-8082 $|$
+	ibrahimadam193@gmail.com  $|$
+	github.com/beelzebielsk  $|$
+	www.linkedin.com/in/adam-ibrahim
+\end{center}
+
+\begin{resumesection}{Education}
+
+%\begin{newplace}
+	%\placerow{New York City College of Technology}
+			     %{Fall 2011 - Spring 2014}
+	%\placerow{}
+			     %{Brooklyn, NY}
+%\end{newplace}
+%
+%\begin{bullets}
+	%\item Pursued AS in Computer Science
+%\end{bullets}
+
+\begin{newplace}
+  \placerow{The City University of New York, City College}
+					 {Expected: August 2018}
+  \jobrow  {Bachelors of Science in Computer Science}{}
+\end{newplace}
+
+\begin{newplace}
+	\placerow{Relevant Coursework}{}
+\end{newplace}
+
+Assembly Programming,
+Data Structures,
+Algorithms,
+%Intro to Theoretical Computer Science,
+Software Engineering,
+Programming Paradigms,
+Database Systems,
+Computer Organization,
+Artificial Intelligence
+Operating Systems,
+%Intro to Machine Learning,
+Computer Security
+
+%\begin{bullets}
+	%\item CSc 21000: Assembly
+	%\item CSc 21200: Data Structures
+	%\item CSc 22000: Algorithms
+	%\item CSc 30400: Intro to Theoretical Computer Science
+	%\item CSc 32200: Software Engineering
+	%\item CSc 33500: Programming Paradigms
+	%\item CSc 33600: Database Systems
+	%\item CSc 34200: Computer Organization
+	%\item CSc 44800: Artificial Intelligence
+  %\item CSc 33200: Operating Systems
+  %\item CSc 59929: Intro to Machine Learning
+  %\item CSc 48000: Computer Security
+%\end{bullets}
+
+\end{resumesection}
+
+\begin{resumesection}{Technical Skills}
+
+\begin{bullets}
+  \item Skills/Technologies: Python, BASH, Javascript, Node.js, Git,
+        HTML, CSS, C++, C, Scheme, VHDL
+  \item Operating Systems: Linux, Windows
+\end{bullets}
+
+\end{resumesection}
+
+\begin{resumesection}{Relevant Experience}
+
+%- Hoopla: {{{ ---------------------------------------------
+
+\begin{newplace}
+  \placerow{Hoopla}{September 2017 - Present}
+\end{newplace}
+
+\begin{bullets}
+  \item Website where fresh imagintive ideas meet technical prowess.
+        Share DIY ideas with a network of people; users can either
+        suggest new ideas or tackle a suggested project
+  \item Designed website backend using Node.js and Express, alongside
+        PostgreSQL
+\end{bullets}
+
+%- }}} -----------------------------------------------------
+%- CTP: {{{ ------------------------------------------------
+
+\begin{newplace}
+	\placerow{CUNY Tech Prep, Javascript}
+					 {New York, NY}
+	\jobrow  {Software Developer}
+				   {June 2017 - Present}
+\end{newplace}
+
+\begin{bullets}
+  \item Selected to competitive full stack JavaScript training program
+        that prepares students for careers in software engineering
+  \item Learn in-demand technologies like \textit{React} and
+        \textit{Node} + \textit{Express} and processes for design,
+        implementation, testing, and deployment
+\end{bullets}
+
+%- }}} -----------------------------------------------------
+%- MSK: {{{ ------------------------------------------------
+
+\begin{newplace}
+  \placerow{Medical Imaging research at Memorial Sloan Kettering
+            Cancer Center}
+				   {Summer 2017}
+  \placerow{}
+				   {New York, NY}
+\end{newplace}
+
+\begin{bullets}
+  \item Organized existing codebase for semi-automatic segmentation
+        into a library
+  \item Implemented segmentation algorithms from new research papers
+  \item Learned new image processing/segmentation material
+        independently during employment, while handling other duties
+\end{bullets}
+
+%- }}} -----------------------------------------------------
+%- Interpreter: {{{ ----------------------------------------
+
+\begin{newplace}
+  \placerow{Continuation-Passing Scheme Interpreter}{Spring 2017}
+\end{newplace}
+
+\begin{bullets}
+  \item Extended existing interpreter with new functionality:
+        creation and use of continutations, exception handling
+\end{bullets}
+
+%- }}} -----------------------------------------------------
+%- RBC Hackathon: {{{ --------------------------------------
+
+% Blog entry to visit:
+% http://www.zahncenternyc.com/24-hr-hackathon-sparks-innovative-fintech-solutions/
+\begin{newplace}
+  \placerow{RBC Fintech Hackathon (3rd Place)}
+					 {New York, NY}
+	\jobrow  {}
+				   %{October 20th-21st, 2016}
+				   {October 2016}
+\end{newplace}
+
+\begin{bullets}
+  \item Collaborated with a team of five other people under duress
+  \item Prioritized goals to deliver best possible product with tight
+        deadlines
+  \item Learned unfamiliar technologies well enough to create an AI
+        chatbot in a few hours
+  \item Competed against other teams to develop software in a single
+        day
+\end{bullets}
+
+%- }}} -----------------------------------------------------
+%- CPU: {{{ ------------------------------------------------
+
+\begin{newplace}
+  \placerow{Single/Multi Cycle CPU}{Spring 2016}
+\end{newplace}
+
+\begin{bullets}
+  \item Implemented CPU on an FPGA using a hardware-description
+        language
+  \item Created product based on specifications on a two-week
+        deadline
+  \item Wrote sample program for CPU in CPU's machine code,
+        demonstrating CPUs ability to branch
+\end{bullets}
+
+%- }}} -----------------------------------------------------
+%- DIMACS: {{{ ---------------------------------------------
+
+\begin{newplace}
+	\placerow{Graph Pebbling research at DIMACS}
+				   {Summer 2013}
+	\placerow{}
+				   {Rutgers University, Busch Campus}
+
+\end{newplace}
+
+\begin{bullets}
+  \item Completed research in algorithms and theoretical Computer
+        Science
+  \item Found shortest paths algorithm for Graph Pebbling and
+        explained results in academic paper
+\end{bullets}
+
+%- }}} -----------------------------------------------------
+%- Emerging Scholars: {{{ ----------------------------------
+
+%\begin{newplace}
+	%\placerow{Emerging Scholar at NYCCT}
+				   %{Fall 2012 - Spring 2014}
+%\end{newplace}
+%
+%\begin{bullets}
+	%\item Compiled reviews of 2-3 existing research papers
+	%\item Presented findings to college community in poster sessions
+%\end{bullets}
+
+%- }}} -----------------------------------------------------
+
+\end{resumesection}
+
+\end{document}
