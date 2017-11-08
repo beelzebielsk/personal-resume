@@ -117,7 +117,7 @@ Database Systems,
 Computer Organization,
 Artificial Intelligence
 Operating Systems,
-%Intro to Machine Learning,
+Intro to Machine Learning,
 Computer Security
 
 %\begin{bullets}
@@ -158,10 +158,10 @@ Computer Security
 \end{newplace}
 
 \begin{bullets}
-  \item Developed website where users can share DIY ideas with a
-        network of people, either suggesting new ideas or tackling a
-        suggested project 
-  \item Designed website backend using Node.js and Express, alongside
+  \item Develop website where users can share DIY ideas with a network
+        of people, either suggesting new ideas or tackling a suggested
+        project 
+  \item Design website backend using Node.js and Express, alongside
         PostgreSQL 
 \end{bullets}
 
@@ -187,8 +187,8 @@ Computer Security
 %- MSK: {{{ ------------------------------------------------
 
 \begin{newplace}
-  \placerow{Medical Imaging research at Memorial Sloan Kettering
-            Cancer Center}
+  \placerow{Medical Imaging research, Memorial Sloan Kettering Cancer
+            Center}
 				   {Summer 2017}
   \jobrow  {Student Researcher}
 				   {New York, NY}
@@ -257,17 +257,31 @@ Computer Security
 %- DIMACS: {{{ ---------------------------------------------
 
 \begin{newplace}
-	\placerow{Graph Pebbling research at Rutger's center for Discrete
-            Mathematics and Theoretical Computer Science (DIMACS)}
-				   {Summer 2013}
-	\jobrow  {Student Researcher}
-				   {Rutgers University, Busch Campus}
-
+	%\placerow{Graph Pebbling research at Rutger's center for Discrete
+  %          Mathematics and Theoretical Computer Science (DIMACS)}
+	%			   {Summer 2013}
+	%\jobrow  {Student Researcher}
+	%			   {Rutgers University, Busch Campus}
+  % TODO: Change the default style to make all of the behavior like
+  % this: left stuff on the left, right stuff on the right. 
+    \begin{tabu} to \linewidth {X}
+      \placeStyle{Graph Pebbling research, Rutger's center for
+                  Discrete Mathematics and Theoretical Computer
+                  Science (DIMACS)} 
+      \\
+      \positionStyle{Student Researcher}
+    \end{tabu}
+    &
+    \begin{tabu} to \linewidth {X[r]}
+      Summer 2013
+      \\
+      Rutgers Univerity, Busch Campus
+    \end{tabu}
 \end{newplace}
 
 \begin{bullets}
-  \item Completed research in algorithms and theoretical Computer
-        Science
+  \item Completed research in algorithms and theoretical computer
+        science
   \item Found shortest paths algorithm for Graph Pebbling and
         explained results in academic paper
 \end{bullets}
