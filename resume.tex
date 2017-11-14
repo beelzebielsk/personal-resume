@@ -6,7 +6,7 @@
 %- Packages: -----------------------------------------------
 \usepackage[margin=.7in, asymmetric, centering]{geometry}
 \usepackage{float}
-\usepackage{enumitem}
+\usepackage[inline]{enumitem}
 \usepackage{fontspec} % Requires LuaLaTeX!
 \usepackage{array} % For extra table stuffs, like before/after column commands.
 \usepackage{tabu}
@@ -39,16 +39,16 @@
 	{\sectionTitle{#1}}
 	{\vspace{10pt}}
 
+% From enumitem. itemize* means inline list.
+\newlist{short}{itemize*}{1}
+\setlist[short]{label={{}}, itemjoin={{, }}}
+
 %- }}} -----------------------------------------------------
 %- }}} -----------------------------------------------------
 \begin{document}
 
 % TODO:
-% - Make a table out of the top.
-% - Remove the page numbers from the page, as they're not necessary
-%   (we're not doing more than one page).
-% - Consider putting the Single Cycle CPU and continuations project on
-%   your resume.
+% - Put GPA.
 
 % - What specific things do I want to communicate to an employer about
 %   me?
@@ -107,18 +107,22 @@
 	\placerow{Relevant Coursework}{}
 \end{newplace}
 
-Assembly Programming,
-Data Structures,
-Algorithms,
-%Intro to Theoretical Computer Science,
-Software Engineering,
-Programming Paradigms,
-Database Systems,
-Computer Organization,
-Artificial Intelligence
-Operating Systems,
-Intro to Machine Learning,
-Computer Security
+% TODO: Figure out how to get rid of the small indent at the start of
+% the first item. It's not \noindent.
+\begin{short}
+  \item Assembly Programming
+  \item Data Structures
+  \item Algorithms
+  %\item Intro to Theoretical Computer Science
+  \item Software Engineering
+  \item Programming Paradigms
+  \item Database Systems
+  \item Computer Organization
+  \item Artificial Intelligence
+  \item Operating Systems
+  \item Intro to Machine Learning
+  \item Computer Security
+\end{short}
 
 %\begin{bullets}
 	%\item CSc 21000: Assembly
@@ -140,9 +144,25 @@ Computer Security
 \begin{resumesection}{Technical Skills}
 
 \begin{bullets}
-  \item Skills/Technologies: Python, BASH, Javascript, Node.js, Git,
-        HTML, CSS, C++, C, Scheme, VHDL
-  \item Operating Systems: Linux, Windows
+  \item Skills/Technologies: 
+    \begin{short}
+      \item Python
+      \item BASH
+      \item Javascript
+      \item Node.js
+      \item Git
+      \item HTML
+      \item CSS
+      \item C++
+      \item C
+      \item Scheme
+      \item VHDL
+    \end{short}
+  \item Operating Systems:
+    \begin{short}
+      \item Linux
+      \item Windows
+    \end{short}
 \end{bullets}
 
 \end{resumesection}
