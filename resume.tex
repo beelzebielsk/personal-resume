@@ -16,8 +16,22 @@
 \setlength{\parindent}{0pt}
 %- Commands: {{{ -------------------------------------------
 % To do small caps: \textsc{}.
+% For creating the effect of a building a left side and right side for
+% places. Append table material to a list of tokens, then paste that
+% material inside of a table at the end. To make breaks work, newlines
+% are places before each token, and at the very end, the earliest
+% newline is gobbled up by \gobblefirst.
+\newcommand{\appendtotoks}[2]{% #1=toks register, #2-toks to append
+  #1=\expandafter{\the#1#2}%
+}
+\def\gobble#1{}
+\def\gobblefirst#1{%
+  #1\expandafter\expandafter\expandafter{\expandafter\gobble\the#1}}
 \newcommand{\name}[1]{{\huge #1} \vspace{10pt}}
 \newcommand{\sectionTitle}[1]{{\Large #1} \vspace{4pt}}
+\newenvironment{resumesection}[1]
+  {\sectionTitle{#1}}
+	{\vspace{10pt}}
 \newcommand{\subSectionTitle}[1]{%
 	{\large \textbf{#1}} \vspace{4pt}%
 }
@@ -25,19 +39,35 @@
 \newcommand{\positionStyle}[1]{\textit{#1}}
 \newenvironment{newplace}
   {
-    \setlength{\tabcolsep}{0pt}
-    \begin{tabu} to \textwidth [h!]{X[65,l]X[35,r]}
+    \newtoks\leftToks
+    \newtoks\rightToks
+    \newcommand{\placerow}[2]{%
+      \appendtotoks{\leftToks}{\\\placeStyle{##1}}%
+      \appendtotoks{\rightToks}{\\##2}}
+    \newcommand{\jobrow}[2]{%
+      \appendtotoks{\leftToks}{\\\positionStyle{##1}}%
+      \appendtotoks{\rightToks}{\\##2}}
+    \newcommand{\plainrow}[2]{%
+      \appendtotoks{\leftToks}{\\##1}%
+      \appendtotoks{\rightToks}{\\##2}}
+    \setlength{\tabcolsep}{0pt}%
   }
-  {\end{tabu}}
-\newcommand{\placerow}[2]{\placeStyle{#1} & #2\tabularnewline}
-\newcommand{\jobrow}[2]{\positionStyle{#1} & #2\tabularnewline}
-\newcommand{\plainrow}[2]{#1 & #2\tabularnewline}
+  {%
+    \begin{tabu} to \linewidth [h!]{X[65,l]X[35,r]}
+      \begin{tabu} to \linewidth {X}
+        \gobblefirst\leftToks
+        \the\leftToks
+      \end{tabu}
+      &
+      \begin{tabu} to \linewidth {X[r]}
+        \gobblefirst\rightToks
+        \the\rightToks
+      \end{tabu}
+    \end{tabu}%
+  }
 \newenvironment{bullets}
 	{\begin{itemize}[noitemsep, topsep=0pt]}
 	{\end{itemize}}
-\newenvironment{resumesection}[1]
-	{\sectionTitle{#1}}
-	{\vspace{10pt}}
 
 % From enumitem. itemize* means inline list.
 \newlist{short}{itemize*}{1}
@@ -277,26 +307,11 @@
 %- DIMACS: {{{ ---------------------------------------------
 
 \begin{newplace}
-	%\placerow{Graph Pebbling research at Rutger's center for Discrete
-  %          Mathematics and Theoretical Computer Science (DIMACS)}
-	%			   {Summer 2013}
-	%\jobrow  {Student Researcher}
-	%			   {Rutgers University, Busch Campus}
-  % TODO: Change the default style to make all of the behavior like
-  % this: left stuff on the left, right stuff on the right. 
-    \begin{tabu} to \linewidth {X}
-      \placeStyle{Graph Pebbling research, Rutger's center for
-                  Discrete Mathematics and Theoretical Computer
-                  Science (DIMACS)} 
-      \\
-      \positionStyle{Student Researcher}
-    \end{tabu}
-    &
-    \begin{tabu} to \linewidth {X[r]}
-      Summer 2013
-      \\
-      Rutgers Univerity, Busch Campus
-    \end{tabu}
+	\placerow{Graph Pebbling research, Rutger's center for Discrete
+            Mathematics and Theoretical Computer Science (DIMACS)}
+				   {Summer 2013}
+	\jobrow  {Student Researcher}
+				   {Rutgers University, Busch Campus}
 \end{newplace}
 
 \begin{bullets}
