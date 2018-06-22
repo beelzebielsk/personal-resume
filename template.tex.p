@@ -1,4 +1,6 @@
 ◊(local-require racket)
+◊(define (string-prepend* prefix)
+    (lambda (str) (string-append prefix str)))
 \documentclass{article}
 %- Preamble: {{{ -------------------------------------------
 
@@ -78,51 +80,30 @@
 %- }}} -----------------------------------------------------
 \begin{document}
 
-\begin{center}
-	\name{◊(select 'name doc)}
+◊let[[(info (cons 'root (select* 'personal-information doc)))]]{
+    ◊(latex-env "center" ◊string-append{
+        ◊(latex-macro "name" ◊(select 'name info))
+    
+    ◊latex-scope{◊(latex-macro "setlength"
+        ◊(latex-macro "tabcolsep") "0pt")
+        ◊(latex-macro "begin" "tabu") to ◊(latex-macro "textwidth") ◊latex-scope{XX[r]}
+        ◊(select 'email info) &
+        ◊(select 'github info) \\
+        ◊(select 'phone-number info) &
+        ◊(select 'linkedin info) 
+        ◊(latex-macro "end" "tabu")
+    }})
+}
 
-  {\setlength{\tabcolsep}{0pt}
-    \begin{tabu} to \textwidth {XX[r]}
-        ◊(let [(info (cons 'root (select* 'contact-information doc)))]
-            (string-join (list
-                (select 'email info) "&"
-                (select 'github info) "\\\\"
-                (select 'phone-number info) "&"
-                (select 'linkedin info))))
-    \end{tabu}
-  }
-\end{center}
-
-\begin{resumesection}{Education}
-    \begin{newplace}
-        \placerow{◊(select-path 'education-information 'school 'name doc)}
-                 {◊(select-path 'education-information 'school 'graduation-date doc)}
-        \jobrow  {◊(select-path 'education-information 'school 'degree doc)}
-                 {}
-    \end{newplace}
-
-    \begin{newplace}
-        \placerow{Relevant Coursework}{}
-    \end{newplace}
-
-    \begin{short}
-        ◊(let* [(to-item 
-                 (lambda (result) 
-                    (string-append "\\item " result)))
-                (items (map to-item (select-path* 'coursework 'course doc)))]
-            (string-join items "\n"))
-    \end{short}
-
-\end{resumesection}
+◊(select 'education-information doc)
 
 \begin{resumesection}{Technical Skills}
-   ◊(select-path* 'skills doc)
+
+    \begin{bullets}
+    ◊(select* 'skills doc)
+    \end{bullets}
+
 \end{resumesection}
 
-\begin{resumesection}{Projects}
-\end{resumesection}
-
-\begin{resumesection}{Experience}
-\end{resumesection}
 
 \end{document}

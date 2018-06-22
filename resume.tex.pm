@@ -1,6 +1,6 @@
 #lang pollen
-◊name{Adam Ibrahim}
-◊contact-information{
+◊personal-information{
+    ◊name{Adam Ibrahim}
     ◊email{ibrahimadam193@gmail.com}
     ◊phone-number{3474588082}
     ◊github{github.com/beelzebielsk}
@@ -26,6 +26,7 @@
     }
 }
 
+
 ◊skills[#:type "Programming"]{
     ◊item{Python}
     ◊item{Bash}
@@ -37,7 +38,6 @@
     ◊item{SQL}
     ◊item{VHDL}
 }
-
 ◊skills[#:type "Technologies"]{
     ◊item{VIM}
     ◊item{Linux}
@@ -55,7 +55,6 @@
     ◊major-technology{Javascript}
     ◊entry-date{September 2017 - December 2017}
     ◊role{Backend Developer}
-    ◊location{}
 
     ◊content{
         ◊item{Developed website where users can share DIY ideas with a
@@ -86,9 +85,12 @@
     ◊entry-date{Spring 2016}
 
     ◊content{
-        ◊item{Implemented CPU on an FPGA using a hardware-description language}
-        ◊item{Created product based on specifications on a two-week deadline}
-        ◊item{Wrote sample program for CPU in CPU’s machine code, demonstrating CPUs ability to branch}
+        ◊item{Implemented CPU on an FPGA using a hardware-description
+        language}
+        ◊item{Created product based on specifications on a two-week
+        deadline}
+        ◊item{Wrote sample program for CPU in CPU’s machine code,
+        demonstrating CPUs ability to branch}
     }
 }
 ◊entry{
@@ -100,31 +102,43 @@
     ◊name{Senior Design Project}
     ◊major-technology{C++}
     ◊entry-date{Fall 2017 - Spring 2018}
+
+    ◊content{
+        ◊item{hi}
+        ◊item{hey}
+    }
 }
 }
 
 ◊experience{
 ◊entry{
-    ◊name{CUNY Tech Prep, Javascript}
+    ◊name{CUNY Tech Prep}
+    ◊major-technology{Javascript}
     ◊entry-date{Fall 2017 - Spring 2018}
     ◊role{Software Developer}
     ◊location{NY, NY}
 
     ◊content{
-        ◊item{Selected for competitive full stack JavaScript training program}
-        ◊item{Learn in-demand technologies like React and Node + Express and processes for design, implementation, testing, and deployment}
+        ◊item{Selected for competitive full stack JavaScript training
+        program}
+        ◊item{Learn in-demand technologies like React and Node +
+        Express and processes for design, implementation, testing, and
+        deployment} 
     }
 }
 ◊entry{
     ◊name{Medical Imaging research, Memorial Sloan Kettering Cancer Center}
+    ◊major-technology{Python}
     ◊entry-date{Summer 2017}
     ◊role{Student Researcher}
     ◊location{NY, NY}
 
     ◊content{
-        ◊item{Organized existing codebase for semi-automatic segmentation into a library}
+        ◊item{Organized existing codebase for semi-automatic
+        segmentation into a library}
         ◊item{Implemented segmentation algorithms from new research papers}
-        ◊item{Learned new image processing/segmentation material independently during employment, while handling}
+        ◊item{Learned new image processing/segmentation material
+        independently during employment, while handling other duties}
     }
 }
 ◊entry{
