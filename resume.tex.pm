@@ -2,7 +2,7 @@
 ◊personal-information{
     ◊name{Adam Ibrahim}
     ◊email{ibrahimadam193@gmail.com}
-    ◊phone-number{3474588082}
+    ◊phone-number{347-458-8082}
     ◊github{github.com/beelzebielsk}
     ◊linkedin{www.linkedin.com/in/adam-ibrahim}
 }
@@ -97,6 +97,11 @@
     ◊name{CUNYFirst Web Scraper}
     ◊major-technology{Python}
     ◊entry-date{October 2016 - November 2017}
+
+    ◊content{
+        ◊item{Fucked around}
+        ◊item{Like a bawss}
+    }
 }
 ◊entry{
     ◊name{Senior Design Project}

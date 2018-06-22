@@ -80,20 +80,7 @@
 %- }}} -----------------------------------------------------
 \begin{document}
 
-◊let[[(info (cons 'root (select* 'personal-information doc)))]]{
-    ◊(latex-env "center" ◊string-append{
-        ◊(latex-macro "name" ◊(select 'name info))
-    
-    ◊latex-scope{◊(latex-macro "setlength"
-        ◊(latex-macro "tabcolsep") "0pt")
-        ◊(latex-macro "begin" "tabu") to ◊(latex-macro "textwidth") ◊latex-scope{XX[r]}
-        ◊(select 'email info) &
-        ◊(select 'github info) \\
-        ◊(select 'phone-number info) &
-        ◊(select 'linkedin info) 
-        ◊(latex-macro "end" "tabu")
-    }})
-}
+◊(select 'personal-information doc)
 
 ◊(select 'education-information doc)
 
@@ -104,6 +91,9 @@
     \end{bullets}
 
 \end{resumesection}
+
+◊(select 'projects doc)
+◊(select 'experience doc)
 
 
 \end{document}
