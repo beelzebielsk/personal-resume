@@ -3,6 +3,12 @@
 (require pollen/tag)
 (require txexpr)
 (provide (all-defined-out))
+
+(module setup racket/base
+        (provide (all-defined-out))
+        (define poly-targets '(pdf odt)))
+
+; Pollen Utility Functions: {{{ --------------------------------------
 (define (select-path . args)
   (let [(terms (take args (sub1 (length args))))
         (tag (last args))]
@@ -21,6 +27,10 @@
         new-terms
         (apply select-path*
                (append (cdr terms) (list (cons 'root new-terms))))))))
+
+; }}} ----------------------------------------------------------------
+
+; Latex Functions: {{{ -----------------------------------------------
 (define (latex-macro #:optional [opt-args '()] cmd-name . args)
   (let* [(macro-start (string-append "\\" cmd-name))
          (bad-args?
@@ -63,12 +73,9 @@
   (apply string-append `("{" ,@contents "}")))
 (define (list-item str)
   (string-append (latex-macro "item") " " str))
-(define (pollen-style-test . args)
-  (string-append
-    (format "Number of args is ~a.\n" (length args))
-    (string-join (map (lambda (arg) (string? arg)) args) "\n")))
+; }}} ----------------------------------------------------------------
 
-; tags
+; Tags: {{{ ----------------------------------------------------------
 
 (define-tag-function (skills attrs elements)
   (let* [(attrs (attrs->hash attrs))
@@ -235,5 +242,7 @@
          (chunk1 (list->string (take (drop chars 3) 3)))
          (chunk2 (list->string (drop chars 6)))]
     (format "(~a)-~a-~a" area-code chunk1 chunk2))))
+
+; }}} ----------------------------------------------------------------
 
 
