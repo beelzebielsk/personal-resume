@@ -6,7 +6,7 @@
 
 (module setup racket/base
         (provide (all-defined-out))
-        (define poly-targets '(pdf odt)))
+        (define poly-targets '(latex odt)))
 
 ; Pollen Utility Functions: {{{ --------------------------------------
 (define (select-path . args)
@@ -77,6 +77,15 @@
 
 ; Tags: {{{ ----------------------------------------------------------
 
+(define paragraph-break "\n\n")
+
+; symbol? -> (procedure any/c)
+; Quickly create a function to determine if a given value is a
+; specific txexpr tag.
+(define (is-tag? tag)
+  (lambda (elem)
+    (and (txexpr? elem) (eq? tag (get-tag elem)))))
+
 (define-tag-function (skills attrs elements)
   (let* [(attrs (attrs->hash attrs))
          (type (hash-ref attrs 'type))]
@@ -89,85 +98,76 @@
                      "\n"))))))
 
 
+(define-tag-function (coursework attrs elements)
+  (let* [(root (cons 'root elements))
+         (courses (select* 'course root))]
+    (list 'coursework)
+    (latex-env
+      "short"
+      (string-join (map list-item courses) "\n"))))
+
+(define-tag-function (school attrs elements)
+  (let* [(root (cons 'root elements))
+         (name (select 'name root))
+         (date (select 'graduation-date root))
+         (degree (select 'degree root))
+         (course-list (select 'coursework root))]
+    (list 'school
+    (string-append
+      (latex-env
+        "newplace"
+        (string-append
+          (latex-macro "placerow" name date)
+          (latex-macro "jobrow" degree)))
+      paragraph-break
+      (latex-env
+        "newplace"
+        (latex-macro "placerow" "Coursework"))
+      paragraph-break
+      course-list))))
+
 (define-tag-function (education-information attrs elements)
   (let* [(root (cons 'root elements))
-         (is-tag? 
-           (lambda (tag)
-             (lambda (elem)
-               (and (txexpr? elem) (eq? tag (get-tag elem))))))
-
-         (school (findf-txexpr root (is-tag? 'school)))
-         (name (findf-txexpr root (is-tag? 'name)))
-         (date (findf-txexpr root (is-tag? 'graduation-date)))
-         (degree (findf-txexpr root (is-tag? 'degree)))
-         (courses (findf*-txexpr root (is-tag? 'course)))]
+         (school (findf-txexpr root (is-tag? 'school)))]
     (list 'education-information
     (latex-env 
       "resumesection"
       #:required '("Education")
       (string-append
-        "\n"
-        (latex-env 
-          "newplace"
-          (string-append
-            (latex-macro "placerow" 
-                         (car (get-elements name))
-                         (car (get-elements date)))
-            (latex-macro "jobrow"
-                         (car (get-elements degree))
-                         "")))
-        "\n\n"
-
-        (latex-env 
-          "newplace"
-          (latex-macro "placerow" "Coursework" ""))
-
-        "\n\n"
-
-        (latex-env
-          "short"
-          (string-join (map (compose1 list-item car get-elements) courses)
-                       "\n")))))))
+        paragraph-break
+        school
+        paragraph-break)))))
 
 (define-tag-function (personal-information attrs elements)
-;(define (personal-information attrs elements)
   (let* [(root (cons 'root elements))
          (name (select 'name root))
          (email (select 'email root))
          (github (select 'github root))
          (phone-number (select 'phone-number root))
          (linkedin (select 'linkedin root))]
-        
-    ;(displayln root)
-    ;(displayln email )
-    ;(displayln github )
-    ;(displayln phone-number )
-    ;(displayln linkedin )
-
     (list 'personal-information
-    (latex-env 
-      "center" 
-      (string-append
-        (latex-macro "name" name) "\n"
-        (latex-scope
-          (latex-macro "setlength" 
-                       (latex-macro "tabcolsep") "0pt")
-          (latex-env 
-            "tabu"
-            #:text-after-begin " to \\textwidth {XX[r]}"
-            (string-append
-              email " &"
-              github " \\\\"
-              phone-number " &"
-              linkedin))))))))
+    (case (current-poly-target)
+      [(latex)
+       (latex-env 
+         "center" 
+         (string-append
+           (latex-macro "name" name) "\n"
+           (latex-scope
+             (latex-macro "setlength" 
+                          (latex-macro "tabcolsep") "0pt")
+             (latex-env 
+               "tabu"
+               #:text-after-begin " to \\textwidth {XX[r]}"
+               (string-append
+                 email " &"
+                 github " \\\\"
+                 phone-number " &"
+                 linkedin)))))]
+      [else 'hi]))))
 
 (define-tag-function (entry attrs elements)
   (displayln elements)
   (let* [(root (cons 'root elements))
-         (is-tag? 
-           (lambda (tag)
-             (lambda (elem)
-               (and (txexpr? elem) (eq? tag (get-tag elem))))))
         (name (select 'name root))
         (major-tech (select 'major-technology root))
         (place-name
@@ -195,7 +195,6 @@
           (lambda (tag)
             (let [(items 
                     (map item-func (findf*-txexpr tag (is-tag? 'item))))]
-                    ;(map item-func '()))]
               (latex-env
                 "bullets"
                 (string-join items "\n")))))
