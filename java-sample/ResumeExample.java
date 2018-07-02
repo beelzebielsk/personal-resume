@@ -84,9 +84,9 @@ class ResumeExample {
         return t;
     }
 
-    /* Adds space before the paragraph, p. The top margin of a
-     * paragraph is the same thing as "add space before" in
-     * LibreOffice.
+    /** Adds space before the paragraph, p. 
+     * The top margin of a paragraph is the same thing as "add space
+     * before" in LibreOffice.
      *
      * space is in inches.
      */
