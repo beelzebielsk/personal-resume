@@ -1,3 +1,6 @@
 output/
 compiled/
 resume.tex
+**/*.class
+template*
+!template.*.p

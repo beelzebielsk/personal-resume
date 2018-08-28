@@ -56,16 +56,16 @@
     \setlength{\tabcolsep}{0pt}%
   }
   {%
-    \begin{tabu} to \linewidth [h!]{X[65,l]X[35,r]}
-      \begin{tabu} to \linewidth {X}
-        \gobblefirst\leftToks
-        \the\leftToks
-      \end{tabu}
-      &
-      \begin{tabu} to \linewidth {X[r]}
-        \gobblefirst\rightToks
-        \the\rightToks
-      \end{tabu}
+    \begin{tabu} to \linewidth [h!]{X[-65,l]X[-35,r]}
+        \begin{tabular}{l}
+            \gobblefirst\leftToks
+            \the\leftToks
+        \end{tabular}
+        &
+        \begin{tabular}{r}
+            \gobblefirst\rightToks
+            \the\rightToks
+        \end{tabular}
     \end{tabu}%
   }
 \newenvironment{bullets}

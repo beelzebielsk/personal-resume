@@ -1,4 +1,5 @@
 #lang racket
+(require pollen/setup)
 (require pollen/core)
 (require pollen/tag)
 (require txexpr)
@@ -6,7 +7,7 @@
 
 (module setup racket/base
         (provide (all-defined-out))
-        (define poly-targets '(latex odt)))
+        (define poly-targets '(tex odt java)))
 
 ; Pollen Utility Functions: {{{ --------------------------------------
 (define (select-path . args)
@@ -30,8 +31,8 @@
 
 ; }}} ----------------------------------------------------------------
 
-; Latex Functions: {{{ -----------------------------------------------
-(define (latex-macro #:optional [opt-args '()] cmd-name . args)
+; tex Functions: {{{ -----------------------------------------------
+(define (tex-macro #:optional [opt-args '()] cmd-name . args)
   (let* [(macro-start (string-append "\\" cmd-name))
          (bad-args?
            (lambda (lst)
@@ -55,7 +56,7 @@
                           #:before-first "{"
                           #:after-last "}")]))]
     (string-append with-optional bracked-args)))
-(define (latex-env #:required [args '()] 
+(define (tex-env #:required [args '()] 
                    #:optional [opt-args '()] 
                    #:text-after-begin [suffix ""]
                    name contents)
@@ -65,14 +66,31 @@
   ;(displayln (list "name:" name))
   ;(displayln (list "contents:" contents))
   (string-append
-    (apply latex-macro `("begin" ,name ,@args) #:optional opt-args)
+    (apply tex-macro `("begin" ,name ,@args) #:optional opt-args)
     suffix "\n"
     contents "\n"
-    (latex-macro "end" name)))
-(define (latex-scope . contents)
+    (tex-macro "end" name)))
+(define (tex-scope . contents)
   (apply string-append `("{" ,@contents "}")))
+(define empty-tex-arg "")
 (define (list-item str)
-  (string-append (latex-macro "item") " " str))
+  (string-append (tex-macro "item") " " str))
+
+; }}} ----------------------------------------------------------------
+
+; Java Functions: {{{ ------------------------------------------------
+(define (write-java-call func . args)
+  (string-append 
+    func
+    (string-join args ", "
+                 #:before-first "("
+                 #:after-last ");")))
+(define (java-string str)
+  (format "\"~a\"" str))
+(define (java-array type lst)
+  (string-join lst ", "
+               #:before-first (format "new ~a[] {" type)
+               #:after-last "}"))
 ; }}} ----------------------------------------------------------------
 
 ; Tags: {{{ ----------------------------------------------------------
@@ -88,55 +106,112 @@
 
 (define-tag-function (skills attrs elements)
   (let* [(attrs (attrs->hash attrs))
-         (type (hash-ref attrs 'type))]
+         (type (hash-ref attrs 'type))
+         (items (select* 'item (cons 'root elements)))
+         ]
     (list 'skills
-    (string-append
-      (list-item type) ":" "\n"
-      (latex-env 
-        "short"
-        (string-join (map list-item (select* 'item (cons 'root elements)))
-                     "\n"))))))
+    (case (current-poly-target)
+      [(tex)
+       (string-append
+         (list-item type) ":" "\n"
+         (tex-env 
+           "short"
+           (string-join (map list-item items) "\n")))]
+      [(java)
+       (java-string "1")
+       (write-java-call "creator.addSkills" 
+                        (java-string type) 
+                        (java-string (string-join items ", ")))]
+      [else 'file-type-error]))))
 
 
 (define-tag-function (coursework attrs elements)
   (let* [(root (cons 'root elements))
          (courses (select* 'course root))]
-    (list 'coursework)
-    (latex-env
-      "short"
-      (string-join (map list-item courses) "\n"))))
+    (list 'coursework
+    (case (current-poly-target)
+      [(tex)
+       (tex-env
+         "short"
+         (string-join (map list-item courses) "\n"))]
+      [(java)
+       (string-join courses ", ")]
+      [else 'file-type-error]))))
 
 (define-tag-function (school attrs elements)
   (let* [(root (cons 'root elements))
          (name (select 'name root))
          (date (select 'graduation-date root))
          (degree (select 'degree root))
-         (course-list (select 'coursework root))]
+         (course-list (select 'coursework root))
+         (empty-tex-arg "")]
     (list 'school
-    (string-append
-      (latex-env
-        "newplace"
-        (string-append
-          (latex-macro "placerow" name date)
-          (latex-macro "jobrow" degree)))
-      paragraph-break
-      (latex-env
-        "newplace"
-        (latex-macro "placerow" "Coursework"))
-      paragraph-break
-      course-list))))
+    (case (current-poly-target)
+      [(tex)
+       (string-append
+         (tex-env
+           "newplace"
+           (string-append
+             (tex-macro "placerow" name date)
+             (tex-macro "jobrow" degree empty-tex-arg)))
+         paragraph-break
+         (tex-env
+           "newplace"
+           (tex-macro "placerow" "Coursework" empty-tex-arg))
+         paragraph-break
+         course-list)]
+      [(java) 
+       (let* [(arg-list 
+                (map java-string 
+                     (list name date degree course-list)))]
+         (apply write-java-call (list* "creator.addSchool" arg-list)))]
+      [else 'file-type-error]))))
+
+(define (resume-section section-name attrs elements)
+  (list section-name
+  (case (current-poly-target)
+    [(tex)
+     (let [(section-name-string (string-titlecase (symbol->string section-name)))]
+       (tex-env 
+         "resumesection" 
+         #:required (list section-name-string)
+         (string-join (select* 'entry (cons 'root elements)) 
+                      "\n\n"
+                      #:before-first "\n"
+                      #:after-last "\n")))]
+    [(java)
+     (let [(section-name-string (string-titlecase (symbol->string section-name)))]
+       (string-append
+         (write-java-call 
+           "creator.addSection" 
+           (java-string section-name-string))
+         ";\n"
+         (let [(entries (select* 'entry (cons 'root elements)))]
+           (if entries
+             (string-join entries "\n")
+             ""))))]
+    [else 'type-error])))
 
 (define-tag-function (education-information attrs elements)
   (let* [(root (cons 'root elements))
          (school (findf-txexpr root (is-tag? 'school)))]
     (list 'education-information
-    (latex-env 
+    (case (current-poly-target)
+      [(tex)
+    (tex-env 
       "resumesection"
       #:required '("Education")
       (string-append
         paragraph-break
-        school
-        paragraph-break)))))
+        (first (get-elements school))
+        paragraph-break))]
+      [(java) 
+       (let* [(section-start 
+                (first (get-elements (resume-section 'education attrs elements))))]
+         (string-append section-start
+                        "\n"
+                        (first (get-elements school))))]
+      [else 'file-type-error]))))
 
 (define-tag-function (personal-information attrs elements)
   (let* [(root (cons 'root elements))
@@ -147,15 +222,15 @@
          (linkedin (select 'linkedin root))]
     (list 'personal-information
     (case (current-poly-target)
-      [(latex)
-       (latex-env 
+      [(tex)
+       (tex-env 
          "center" 
          (string-append
-           (latex-macro "name" name) "\n"
-           (latex-scope
-             (latex-macro "setlength" 
-                          (latex-macro "tabcolsep") "0pt")
-             (latex-env 
+           (tex-macro "name" name) "\n"
+           (tex-scope
+             (tex-macro "setlength" 
+                          (tex-macro "tabcolsep") "0pt")
+             (tex-env 
                "tabu"
                #:text-after-begin " to \\textwidth {XX[r]}"
                (string-append
@@ -163,73 +238,105 @@
                  github " \\\\"
                  phone-number " &"
                  linkedin)))))]
+      [(java)
+       (apply write-java-call 
+              (cons "creator.addPersonalInfo"
+                    (map java-string (list email github phone-number linkedin))))]
       [else 'hi]))))
 
 (define-tag-function (entry attrs elements)
-  (displayln elements)
   (let* [(root (cons 'root elements))
-        (name (select 'name root))
-        (major-tech (select 'major-technology root))
-        (place-name
-          (if major-tech
-            (format "~a, ~a" name major-tech)
-            name))
-        (date (select 'entry-date root))
-        (role (select 'role root))
-        (location (select 'location root))
-        (placerow (latex-macro "placerow" place-name date))
-        (default-value (lambda (val default) (or val default)))
-        (place
-          (latex-env 
-            "newplace"
-            (if (or role location)
-              (let [(role (default-value role ""))
-                    (location (default-value location ""))]
-                (string-append
-                  placerow "\n"
-                  (latex-macro "jobrow" role location)))
-              placerow)))
-        (item-func (lambda (tag) 
-                     (list-item (car (get-elements tag)))))
-        (content-func
-          (lambda (tag)
-            (let [(items 
-                    (map item-func (findf*-txexpr tag (is-tag? 'item))))]
-              (latex-env
-                "bullets"
-                (string-join items "\n")))))
-        (content 
-          (let [(search-result (findf-txexpr root (is-tag? 'content)))]
-            (if (not search-result)
-              ""
-              (content-func search-result))))]
-    (list 'entry
-    (string-append
-      place "\n\n"
-      content))))
+         (name (select 'name root))
+         (major-tech (select 'major-technology root))
+         (place-name
+           (if major-tech
+             (format "~a, ~a" name major-tech)
+             name))
+         (date (select 'entry-date root))
+         (role (select 'role root))
+         (location (select 'location root))
+         (not-whitespace?
+           (lambda (str)
+             (case str
+               [("\n" "\r" "\t" " ") #f]
+               [else #t])))
+         (normalize-item 
+           (lambda (item-elem)
+             (let* [(strings (filter string? (get-elements item-elem)))
+                    (normalized (filter not-whitespace? strings))
+                    (content (string-join normalized " "))
+                    (trimmed (string-trim content #px"\\s*\\.*"))]
+               trimmed)))]
+    (case (current-poly-target)
+      [(tex)
+       (let* [(placerow (tex-macro "placerow" place-name date))
+              (default-value (lambda (val default) (or val default)))
+              (place
+                (tex-env 
+                  "newplace"
+                  (if (or role location)
+                    (let [(role (default-value role ""))
+                          (location (default-value location ""))]
+                      (string-append
+                        placerow "\n"
+                        (tex-macro "jobrow" role location)))
+                    placerow)))
+              (item-func 
+                (lambda (tag) 
+                  (list-item (normalize-item tag))))
+              (content-func
+                (lambda (tag)
+                  (let [(items 
+                          (map item-func (findf*-txexpr tag (is-tag? 'item))))]
+                    (tex-env
+                      "bullets"
+                      (string-join items "\n")))))
+              (content 
+                (let [(search-result (findf-txexpr root (is-tag? 'content)))]
+                  (if (not search-result)
+                    ""
+                    (content-func search-result))))]
+         (list 'entry
+               (string-append
+                 place paragraph-break
+                 content)))]
+    [(java)
+     (let* [(default-value (lambda (default val) (or val default)))
+            (item-func 
+              (lambda (tag) 
+                (java-string (normalize-item tag))))
+            (entry-args
+              (map java-string 
+                   (if (or role location)
+                     (map (curry default-value "") 
+                          (list place-name date role location))
+                     (list place-name date))))
+            (content-func
+              (lambda (tag)
+                (let [(items 
+                        (map item-func (findf*-txexpr tag (is-tag? 'item))))]
+                  (java-array "String" items))))
+            (content 
+              (let [(search-result (findf-txexpr root (is-tag? 'content)))]
+                (if (not search-result)
+                  (java-array "String")
+                  (content-func search-result))))]
+       (list 'entry
+             (apply write-java-call 
+                    (append (list "creator.addEntry")
+                            entry-args 
+                            (list content)) 
+                    )))]
+    [else 'type-error])))
+
 
 
 (define-tag-function (projects attrs elements)
-  (list 'projects
-  (latex-env 
-    "resumesection" 
-    #:required '("Projects")
-    (string-join (select* 'entry (cons 'root elements)) 
-                 "\n\n"
-                 #:before-first "\n"
-                 #:after-last "\n"))))
+  (resume-section 'projects attrs elements))
 
 
 (define-tag-function (experience attrs elements)
-  (list 'experience
-  (latex-env 
-    "resumesection" 
-    #:required '("Experience")
-    (string-join (select* 'entry (cons 'root elements)) 
-                 "\n\n"
-                 #:before-first "\n"
-                 #:after-last "\n"))))
-
+  (resume-section 'experience attrs elements))
 
 (define-tag-function (phone-number attrs elements)
   (list 'phone-number
@@ -243,5 +350,3 @@
     (format "(~a)-~a-~a" area-code chunk1 chunk2))))
 
 ; }}} ----------------------------------------------------------------
-
-

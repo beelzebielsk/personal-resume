@@ -8,6 +8,8 @@ import org.odftoolkit.simple.style.MasterPage;
 // To manipulate tables (Table) and their cells (Cell)
 import org.odftoolkit.simple.table.Table;
 import org.odftoolkit.simple.table.Cell;
+import org.odftoolkit.simple.table.Column;
+import org.odftoolkit.simple.table.Row;
 import org.odftoolkit.simple.table.CellStyleHandler;
 import org.odftoolkit.simple.style.Border;
 import org.odftoolkit.simple.style.TableCellProperties;
@@ -81,6 +83,24 @@ class ResumeExample {
             }
         }
 
+        return t;
+    }
+    public static Table entry(TextDocument doc, String[][] data, Font[][] fonts) 
+    throws Exception {
+        Table t = borderlessTable(doc, data);
+        int numColumns = data[0].length - 1;
+        Column first = t.getColumnByIndex(0);
+        Column last = t.getColumnByIndex(numColumns);
+        for (int row = 0; row < data.length; row++) {
+            for (int col = 0; col < data[row].length; col++) {
+                t.getCellByPosition(col, row).setFont(fonts[row][col]);
+            }
+        }
+        double pageWidth = MasterPage.getOrCreateMasterPage(doc, "Standard").getPageWidth();
+        double firstColProportion = .70;
+        double lastColProportion = .30;
+        first.setWidth(pageWidth * firstColProportion);
+        last.setWidth(pageWidth * lastColProportion);
         return t;
     }
 
@@ -195,6 +215,7 @@ class ResumeExample {
         Font heading = new Font("Heuristica", FontStyle.BOLD, 13);
         Font bigHeading = new Font("Heuristica", FontStyle.BOLD, 20);
         Font veryDifferent = new Font("DejaVu Serif", FontStyle.BOLD, 30);
+        Font location = new Font("Heuristica", FontStyle.ITALIC, 11);
 
         //OdfOfficeStyles ofCurrentDoc = new OdfOfficeStyles(doc.getFileDom());
         //OdfStyle style = OdfOfficeStyles.newStyle("resume cell", OdfStyleFamily.TableCell);
@@ -209,7 +230,9 @@ class ResumeExample {
             p = doc.addParagraph("Education");
             p.getStyleHandler().getParagraphPropertiesForWrite().setMarginTop(.50 * 25.4);
             p.setFont(heading);
-            borderlessTable(doc, educationalInfo);
+            //borderlessTable(doc, educationalInfo);
+            entry(doc, educationalInfo, new Font[][] 
+                    {{baseBold, baseFont}, {location, baseFont}});
             p = doc.addParagraph("Projects");
             p.setFont(heading);
             t = borderlessTable(doc, new String[][] {{"Senior Design Project", "Fall 2017 - Spring 2018"}});
@@ -220,8 +243,8 @@ class ResumeExample {
             appendTextWithFont(li, doc, " BOLDLY.", veryDifferent);
             l.setDecorator(new BulletDecorator(doc));
             //l.getOdfElement().setOdfAttribute(FoMarginLeftAttribute);
-            l.getOdfElement().setOdfAttributeValue(FoMarginLeftAttribute.ATTRIBUTE_NAME, "5cm");
-            li.getOdfElement().setOdfAttributeValue(FoMarginLeftAttribute.ATTRIBUTE_NAME, "5cm");
+            //l.getOdfElement().setOdfAttributeValue(FoMarginLeftAttribute.ATTRIBUTE_NAME, "5cm");
+            //li.getOdfElement().setOdfAttributeValue(FoMarginLeftAttribute.ATTRIBUTE_NAME, "5cm");
 
             p = doc.addParagraph("This should be (not in bold) ");
             appendTextWithFont(p, "in bold.", veryDifferent);
